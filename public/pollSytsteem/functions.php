@@ -16,8 +16,7 @@ function pdo_connect_mysql() {
 // Template header, feel free to customize this
 function template_header($title) {
     echo <<<EOT
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html> 
 	<head>
 		<meta charset="utf-8">
 		<title>$title</title>

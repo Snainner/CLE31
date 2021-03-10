@@ -60,7 +60,6 @@ if (!empty($_POST)) {
         <textarea name="answers" id="answers" required></textarea>
 
 
-
             <input type="button" onclick="addInput()"/>
 
             <span id="responce"></span>
