@@ -19,12 +19,15 @@ if (!empty($_POST)) {
 
 
     // Get the question
-    $question = isset($_POST['question']) ? $_POST['question'] : '';
-    // Sends it to the DB
+    $questions = isset($_POST['question']) ? $_POST['question'] : '';
+    //$questions = isset($_POST['answers']) ? explode(PHP_EOL, $_POST['answers']) : '';
+    foreach($questions as $question) {
+        // Sends it to the DB
         $stmt = $pdo->prepare('INSERT INTO poll_questions VALUE (NULL,?,?)');
         $stmt->execute([$poll_id, $question]);
         // Gets the primary key to tie it to the answers
         $poll_questions_id = $pdo->lastInsertId();
+    }
     // Get the answers and convert the multiline string to an array, so we can add each answer to the "poll_answers" table
     $answers = isset($_POST['answers']) ? explode(PHP_EOL, $_POST['answers']) : '';
     foreach ($answers as $answer) {
@@ -36,13 +39,21 @@ if (!empty($_POST)) {
     }
     // Output message
     $msg = 'Created Successfully!';
-
+    print_r($_POST);
 }
 ?>
 
 <?=template_header('Create Poll')?>
-<script>
+<script type="text/javascript">
+    function addTextArea(){
+        var div = document.getElementById('div_quotes');
+        div.innerHTML += "<label for='question'>Vraag</label>";
+        div.innerHTML += "<input type='text' name='question[]' />";
+        div.innerHTML += "<label for='answers'>Antwoorden</label>";
+        div.innerHTML += "<textarea name='answer[]' />";
 
+        div.innerHTML += "\n<br />";
+    }
 </script>
 
 <div class="content update">
@@ -53,42 +64,19 @@ if (!empty($_POST)) {
         <label for="desc">Beschrijving</label>
         <input type="text" name="desc" id="desc">
 
-
-        <label for="question">Vraag</label>
-        <input type="text" name="question" id="question">
-        <label for="answers">Antwoorden (1 antwoord per zin)</label>
-        <textarea name="answers" id="answers" required></textarea>
-
-
-            <input type="button" onclick="addInput()"/>
-
-            <span id="responce"></span>
-            <script>
-                var countBox =1;
-                var boxName = 0;
-                function addInput()
-                {
-                    var boxName="question"+countBox;
-                    document.getElementById('responce').innerHTML+='<br/><input type="text" id="'+boxName+'" value="'+boxName+'" "  /><br/>';
-                    countBox += 1;
-                }
-            </script>
+       <div id="div_quotes">
+           <label for="question">Vraag</label>
+           <input type="text" name="question" id="question">
+           <label for="answers">Antwoorden (1 antwoord per zin)</label>
+           <textarea name="answers" id="answers" required></textarea>
+           <input type="button" value="Add text area" onClick="addTextArea();">
+       </div>
 
 
-        <input type="button" onclick="addInput()"/>
 
-        <span id="response"></span>
-            <script>
-            var countBox2 =1;
-            var boxName2 = 0;
-            function addInput()
-            {
-                var boxName2="answer"+countBox2;
-                document.getElementById('response').innerHTML+='<br/><input type="text" id="'+boxName2+'" value="'+boxName2+'" "  /><br/>';
-                document.getElementById('response').innerHTML+='<br/><input type="text" id="'+boxName2+'" value="'+boxName2+'" "  /><br/>';
-                countBox2 += 1;
-            }
-        </script>
+
+
+
 
         <input type="submit" value="Create">
     </form>
