@@ -20,16 +20,19 @@ if (!empty($_POST)) {
 
     // Get the question
     $questions = isset($_POST['question']) ? $_POST['question'] : '';
-    //$questions = isset($_POST['answers']) ? explode(PHP_EOL, $_POST['answers']) : '';
+    //$questions = isset($_POST['question']) ? explode(PHP_EOL, $_POST['question']) : '';
     foreach($questions as $question) {
+        if (empty($question)) continue;
         // Sends it to the DB
         $stmt = $pdo->prepare('INSERT INTO poll_questions VALUE (NULL,?,?)');
         $stmt->execute([$poll_id, $question]);
         // Gets the primary key to tie it to the answers
-        $poll_questions_id = $pdo->lastInsertId();
+
     }
+    $poll_questions_id = $pdo->lastInsertId();
     // Get the answers and convert the multiline string to an array, so we can add each answer to the "poll_answers" table
     $answers = isset($_POST['answers']) ? explode(PHP_EOL, $_POST['answers']) : '';
+    //$answers = isset($_POST['answers']) ? $_POST['answers'] : '';
     foreach ($answers as $answer) {
         // If the answer is empty there is no need to insert
         if (empty($answer)) continue;
@@ -48,9 +51,9 @@ if (!empty($_POST)) {
     function addTextArea(){
         var div = document.getElementById('div_quotes');
         div.innerHTML += "<label for='question'>Vraag</label>";
-        div.innerHTML += "<input type='text' name='question[]' />";
+        div.innerHTML += "<textarea  name='question[]' />";
         div.innerHTML += "<label for='answers'>Antwoorden</label>";
-        div.innerHTML += "<textarea name='answer[]' />";
+        div.innerHTML += "<textarea name='answers' />";
 
         div.innerHTML += "\n<br />";
     }
@@ -66,17 +69,11 @@ if (!empty($_POST)) {
 
        <div id="div_quotes">
            <label for="question">Vraag</label>
-           <input type="text" name="question" id="question">
+           <textarea  name="question[]" id="question"></textarea>
            <label for="answers">Antwoorden (1 antwoord per zin)</label>
            <textarea name="answers" id="answers" required></textarea>
            <input type="button" value="Add text area" onClick="addTextArea();">
        </div>
-
-
-
-
-
-
 
         <input type="submit" value="Create">
     </form>
